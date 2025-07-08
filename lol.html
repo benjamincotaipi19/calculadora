@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de la Ley de Ohm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            display: none;
+        }
+        .formula {
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background-color: #ecf0f1;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        .tab.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de la Ley de Ohm</h1>
+        
+        <div class="formula">
+            V = I × R &nbsp;&nbsp;&nbsp; (Voltaje = Corriente × Resistencia)
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="changeTab(0)">Calcular Voltaje (V)</div>
+            <div class="tab" onclick="changeTab(1)">Calcular Corriente (I)</div>
+            <div class="tab" onclick="changeTab(2)">Calcular Resistencia (R)</div>
+        </div>
+        
+        <div id="voltage-tab" class="tab-content active">
+            <h2>Calcular Voltaje (V)</h2>
+            <p>Ingresa la corriente y la resistencia para calcular el voltaje.</p>
+            
+            <div class="form-group">
+                <label for="current-v">Corriente (I) en amperios (A):</label>
+                <input type="number" id="current-v" step="any" placeholder="Ej: 0.5">
+            </div>
+            
+            <div class="form-group">
+                <label for="resistance-v">Resistencia (R) en ohmios (Ω):</label>
+                <input type="number" id="resistance-v" step="any" placeholder="Ej: 100">
+            </div>
+            
+            <button onclick="calculateVoltage()">Calcular Voltaje</button>
+            
+            <div id="voltage-result" class="result">
+                <h3>Resultado:</h3>
+                <p>El voltaje (V) es: <span id="voltage-value"></span> voltios (V)</p>
+            </div>
+        </div>
+        
+        <div id="current-tab" class="tab-content">
+            <h2>Calcular Corriente (I)</h2>
+            <p>Ingresa el voltaje y la resistencia para calcular la corriente.</p>
+            
+            <div class="form-group">
+                <label for="voltage-i">Voltaje (V) en voltios (V):</label>
+                <input type="number" id="voltage-i" step="any" placeholder="Ej: 12">
+            </div>
+            
+            <div class="form-group">
+                <label for="resistance-i">Resistencia (R) en ohmios (Ω):</label>
+                <input type="number" id="resistance-i" step="any" placeholder="Ej: 100">
+            </div>
+            
+            <button onclick="calculateCurrent()">Calcular Corriente</button>
+            
+            <div id="current-result" class="result">
+                <h3>Resultado:</h3>
+                <p>La corriente (I) es: <span id="current-value"></span> amperios (A)</p>
+            </div>
+        </div>
+        
+        <div id="resistance-tab" class="tab-content">
+            <h2>Calcular Resistencia (R)</h2>
+            <p>Ingresa el voltaje y la corriente para calcular la resistencia.</p>
+            
+            <div class="form-group">
+                <label for="voltage-r">Voltaje (V) en voltios (V):</label>
+                <input type="number" id="voltage-r" step="any" placeholder="Ej: 12">
+            </div>
+            
+            <div class="form-group">
+                <label for="current-r">Corriente (I) en amperios (A):</label>
+                <input type="number" id="current-r" step="any" placeholder="Ej: 0.5">
+            </div>
+            
+            <button onclick="calculateResistance()">Calcular Resistencia</button>
+            
+            <div id="resistance-result" class="result">
+                <h3>Resultado:</h3>
+                <p>La resistencia (R) es: <span id="resistance-value"></span> ohmios (Ω)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeTab(tabIndex) {
+            // Ocultar todos los contenidos de pestañas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Desactivar todas las pestañas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activar la pestaña seleccionada
+            document.querySelectorAll('.tab')[tabIndex].classList.add('active');
+            
+            // Mostrar el contenido de la pestaña seleccionada
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents[tabIndex].classList.add('active');
+        }
+        
+        function calculateVoltage() {
+            const current = parseFloat(document.getElementById('current-v').value);
+            const resistance = parseFloat(document.getElementById('resistance-v').value);
+            
+            if (isNaN(current) || isNaN(resistance)) {
+                alert('Por favor ingresa valores válidos para corriente y resistencia.');
+                return;
+            }
+            
+            if (resistance <= 0) {
+                alert('La resistencia debe ser mayor que cero.');
+                return;
+            }
+            
+            const voltage = current * resistance;
+            document.getElementById('voltage-value').textContent = voltage.toFixed(2);
+            document.getElementById('voltage-result').style.display = 'block';
+        }
+        
+        function calculateCurrent() {
+            const voltage = parseFloat(document.getElementById('voltage-i').value);
+            const resistance = parseFloat(document.getElementById('resistance-i').value);
+            
+            if (isNaN(voltage) || isNaN(resistance)) {
+                alert('Por favor ingresa valores válidos para voltaje y resistencia.');
+                return;
+            }
+            
+            if (resistance <= 0) {
+                alert('La resistencia debe ser mayor que cero.');
+                return;
+            }
+            
+            const current = voltage / resistance;
+            document.getElementById('current-value').textContent = current.toFixed(4);
+            document.getElementById('current-result').style.display = 'block';
+        }
+        
+        function calculateResistance() {
+            const voltage = parseFloat(document.getElementById('voltage-r').value);
+            const current = parseFloat(document.getElementById('current-r').value);
+            
+            if (isNaN(voltage) || isNaN(current)) {
+                alert('Por favor ingresa valores válidos para voltaje y corriente.');
+                return;
+            }
+            
+            if (current <= 0) {
+                alert('La corriente debe ser mayor que cero.');
+                return;
+            }
+            
+            const resistance = voltage / current;
+            document.getElementById('resistance-value').textContent = resistance.toFixed(2);
+            document.getElementById('resistance-result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
